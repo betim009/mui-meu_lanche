@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { validateRegister } from "../utils/validateRegister";
 import { validateLogin } from "../utils/validateLogin";
+import { getAllUsers } from "../services/fetchUsers";
+import { useNavigate } from "react-router";
 
 export function useLogin() {
   const [formData, setFormData] = useState({
@@ -13,6 +15,8 @@ export function useLogin() {
   });
 
   const [errors, setErrors] = useState({});
+
+  const navigate = useNavigate();
 
   const handleChange = ({ target }) => {
     const { name, value, type, checked } = target;
@@ -34,7 +38,7 @@ export function useLogin() {
     }
   };
 
-  const handleSubmitIn = (e) => {
+  const handleSubmitIn = async (e) => {
     e.preventDefault();
 
     const newErrors = validateLogin(formData);
@@ -42,7 +46,25 @@ export function useLogin() {
     const validate = Object.keys(newErrors).length === 0;
     if (validate) {
       console.log("Formulário válido:", formData);
-      // enviar para backend...
+      const data = await getAllUsers();
+
+      if (
+        data.find(
+          (e) => e.email === formData.email && e.password === formData.password
+        )
+      ) {
+        console.log("certo");
+        navigate("/");
+      } else {
+        setFormData({
+          fullName: "",
+          email: "",
+          phone: "",
+          password: "",
+          confirmPassword: "",
+          termsAccepted: false,
+        });
+      }
     }
   };
 
@@ -53,6 +75,6 @@ export function useLogin() {
     setErrors,
     handleChange,
     handleSubmitUp,
-    handleSubmitIn
+    handleSubmitIn,
   };
 }

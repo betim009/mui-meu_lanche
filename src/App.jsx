@@ -9,8 +9,8 @@ function App() {
   return (
     <>
       <Routes>
-        <Route index element={<Home />} />
         <Route element={<LayoutSign />}>
+          <Route index element={<Home />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/signin" element={<SignIn />} />
         </Route>
